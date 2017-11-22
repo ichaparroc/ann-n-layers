@@ -31,11 +31,11 @@ double mse(double *t,double *a,int n)
 int main(void)
 {
   cout.precision(8);
-  int n_inputs,n_outputs,n_instances,n_layers,n_epoch;
-  double alpha,aleatorio,error;
-  
+  int n_instances,n_layers,n_epoch;
+  double alpha,error;
+
   cout<<" Artificial Neural Network with n-layers\n=========================================\n\n";
-  
+
   //topology
   cout<<"Ingrese Nro de Capas";cin>>n_layers;
   int *layer = new int[n_layers];
@@ -44,9 +44,9 @@ int main(void)
     cout<<"\nIngrese el Nro de Neuronas en la capa "<<i<<": ";
     cin>>layer[i];
   }
-  
+
   cout<<"\nIngrese el Nro de Instancias: ";cin>>n_instances;
-  
+
   //create matrix of inputs and outputs
   double **input = new double*[n_instances];
   double **output = new double*[n_instances];
@@ -112,7 +112,7 @@ int main(void)
 	//w[2][0][1]=0.8;
 	w[2][1][0]=0.85;
 	//w[2][1][1]=0.9;*/
-  
+
   //create structure of data for backward
   double **d_b = new double*[n_layers-1];
   for(int i=0;i<n_layers-1;i++)
@@ -137,7 +137,7 @@ int main(void)
 
       //calculate error
       error+=mse(output[instance],a[n_layers-1],layer[n_layers-1]);
-      
+ 
       //backward propagation
       //for the last layer
       int m=n_layers-2;
@@ -155,17 +155,17 @@ int main(void)
             z+=w[m+1][i][j]*d_b[m+1][j];
           d_b[m][i]=z*dact(a[m+1][i]);
         }
-        
+
       //new weight and bias ///////falta verificar
       for(m=0;m<n_layers-1;m++)
-        for(int i=0;i<layer[m];i++)
-          for(int j=0;j<layer[m+1];j++)
-          {
-            w[m][i][j]-=alpha*d_b[m][j]*a[m][i];
-            b[m][j]-=alpha*d_b[m][j];
-          }
+         for(int j=0;j<layer[m+1];j++)
+         {
+        	b[m][j]-=alpha*d_b[m][j];
+        	for(int i=0;i<layer[m];i++)
+            	w[m][i][j]-=alpha*d_b[m][j]*a[m][i];
+         }
     }
-    cout<<endl<<epoch<<" : "<<error/n_instances;
+    cout<<endl<<epoch<<" : "<<error;
   }
 
   return 0;
